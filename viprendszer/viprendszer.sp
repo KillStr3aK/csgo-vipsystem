@@ -392,13 +392,13 @@ public void Hosszabbitas(Jatekos admin, char[] steamid, int honap) {
 public void JogAdas(Jatekos admin, Jatekos celpont, Jog jogosultsag, int honap)
 {
 	char cAdminSteamID[20];
-	admin.GetAuthId(AuthId_Steam2, cAdminSteamID, sizeof(cAdminSteamID));
+	if(admin.index != 0) admin.GetAuthId(AuthId_Steam2, cAdminSteamID, sizeof(cAdminSteamID));
+	else strcopy(cAdminSteamID, sizeof(cAdminSteamID), "Rendszer");
 	char cAdminNev[MAX_NAME_LENGTH+1];
 	if(admin.index != 0) admin.GetName(cAdminNev, sizeof(cAdminNev));
 	else strcopy(cAdminNev, sizeof(cAdminNev), "Rendszer");
 	char cEscapedAdminName[MAX_NAME_LENGTH * 2 + 16];
 	SQL_EscapeString(g_DB, cAdminNev, cEscapedAdminName, sizeof(cEscapedAdminName));
-	
 	
 	char cSteamID[20];
 	celpont.GetAuthId(AuthId_Steam2, cSteamID, sizeof(cSteamID));
@@ -415,7 +415,7 @@ public void JogAdas(Jatekos admin, Jatekos celpont, Jog jogosultsag, int honap)
 	Format(Idofrissites, sizeof(Idofrissites), "UPDATE viprendszer SET lejar = DATE_ADD(lejar, INTERVAL %i MONTH) WHERE steamid = '%s';", honap, cSteamID);
 	SQL_TQuery(g_DB, SQLHibaKereso, Idofrissites);
 	
-	PrintToChat(admin.index, "%s Hozzáadtál egy új %s <\x03%s \x01| \x03%i \x03hónap\x01>", PREFIX, jogosultsag == VIP?"VIP-t":"Prémiumot", jatekosnev, honap);
+	if(admin.index != 0) PrintToChat(admin.index, "%s Hozzáadtál egy új %s <\x03%s \x01| \x03%i \x03hónap\x01>", PREFIX, jogosultsag == VIP?"VIP-t":"Prémiumot", jatekosnev, honap);
 	PrintToChat(celpont.index, "%s %s jogokat kaptál \x01 <\x03%i \x03 hónap\x01>", PREFIX, jogosultsag == VIP?"VIP":"Prémium", honap);
 	Flagadas(celpont, jogosultsag);
 }
@@ -626,11 +626,6 @@ stock Jog Jogosultsag(Jatekos jatekos)
 
 public int Native_Hozzaadas(Handle myplugin, int argc)
 {
-	if(!view_as<Jatekos>(GetNativeCell(1)).IsValid) ThrowNativeError(SP_ERROR_NATIVE, "Érvénytelen játékos ( %i )", view_as<Jatekos>(GetNativeCell(1)).index);
-	if(!view_as<Jatekos>(GetNativeCell(2)).IsValid) ThrowNativeError(SP_ERROR_NATIVE, "Érvénytelen admin ( %i )", view_as<Jatekos>(GetNativeCell(2)).index);
-	if(GetNativeCell(3) != (Semmi || VIP || PREMIUM)) ThrowNativeError(SP_ERROR_NATIVE, "Érvénytelen jogosultság ( %i )", GetNativeCell(3));
-	if(GetNativeCell(4) == 0 || GetNativeCell(4) > 100) ThrowNativeError(SP_ERROR_NATIVE, "Érvénytelen dátum ( %i ) [ MIN: 0 - MAX: 100 ]", GetNativeCell(4));
-
 	JogAdas(GetNativeCell(1), GetNativeCell(2), GetNativeCell(3), GetNativeCell(4));
 }
 
