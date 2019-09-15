@@ -92,7 +92,7 @@ public void OnConfigsExecuted()
 	g_vR[CEnum_VipFlag].GetString(cVipFlags, sizeof(cVipFlags));
 	if(g_vR[CEnum_Premium].IntValue == 1) g_vR[CEnum_PremFlag].GetString(cPremFlags, sizeof(cPremFlags));
 
-	char cJogok[Jog][20][6];
+	char cJogok[Jog][20][10];
 
 	for (int k = 1; k < 3; ++k)
 	{
@@ -166,9 +166,7 @@ public void VipMenu(Handle owner, Handle hndl, const char[] error, Jatekos jatek
 	Menu menu = CreateMenu(VipMenuCallback);
 	char sor[256];
 	Format(sor, sizeof(sor), "Lejár: %s (%s nap múlva)", cLejar, cETA);
-	SetMenuTitle(menu, "VIP MENÜ\n%s", sor);
-	Format(sor, sizeof(sor), "Jogosultság: %s", cJog);
-	menu.AddItem("", sor, ITEMDRAW_DISABLED);
+	SetMenuTitle(menu, "VIP MENÜ\n%s\nJogosultság: %s", sor, cJog);
 	menu.AddItem("", "", ITEMDRAW_SPACER);
 	menu.AddItem("ugras", "Ugrások");
 	menu.AddItem("aji", "Napi ajándék");
@@ -422,7 +420,13 @@ public void JogAdas(Jatekos admin, Jatekos celpont, Jog jogosultsag, int honap)
 
 public void Flagadas(Jatekos jatekos, Jog jogosultsag) {
 	jog[jatekos.index] = jogosultsag;
-	for (int i = 0; i < g_iFlagCount[jogosultsag]; i++) SetUserFlagBits(jatekos.index, GetUserFlagBits(jatekos.index) | (1 << g_iFlags[jogosultsag][i]));
+	for (int i = 0; i < g_iFlagCount[jogosultsag]; i++){
+		SetUserFlagBits(jatekos.index, GetUserFlagBits(jatekos.index) | (1 << g_iFlags[jogosultsag][i]));
+		if(jogosultsag == PREMIUM)
+		{
+			SetUserFlagBits(jatekos.index, GetUserFlagBits(jatekos.index) | (1 << g_iFlags[VIP][i]));
+		}
+	}
 }
 
 public Action PreJogosultLista(Jatekos jatekos)
