@@ -41,17 +41,17 @@ public Action Command_AddVip(int client, int args)
 		return Plugin_Handled;
 	}
 
-	char cArgs[3][32];
-	for (int i = 0; i < 3; ++i)
+	char cArgs[4][32];
+	for (int i = 1; i <= 3; ++i)
 	{
 		GetCmdArg(i, cArgs[i], sizeof(cArgs[]));
 	}
 
-	Jatekos target = view_as<Jatekos>(FindTarget(client, cArgs[0], true));
+	Jatekos target = view_as<Jatekos>(FindTarget(client, cArgs[1], true));
 
 	if(!target.IsValid || !IsValidClient(client)) return Plugin_Handled;
 
-	VR_Hozzaadas(view_as<Jatekos>(client), target, view_as<Jog>(StringToInt(cArgs[1])), StringToInt(cArgs[2]));
+	VR_Hozzaadas(view_as<Jatekos>(client), target, view_as<Jog>(StringToInt(cArgs[2])), StringToInt(cArgs[3]));
 
 	return Plugin_Handled;
 }
@@ -66,7 +66,7 @@ public Action Command_DelVip(int client, int args)
 
 	char cArgs[MAX_NAME_LENGTH+1];
 	GetCmdArg(1, cArgs, sizeof(cArgs));
-	
+
 	char cSteamID[20];
 	GetClientAuthId(FindTarget(client, cArgs, true), AuthId_Steam2, cSteamID, sizeof(cSteamID));
 	VR_Elvetel(cSteamID);
