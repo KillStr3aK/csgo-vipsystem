@@ -64,8 +64,11 @@ public Action Command_DelVip(int client, int args)
 		return Plugin_Handled;
 	}
 
+	char cArgs[MAX_NAME_LENGTH+1];
+	GetCmdArg(1, cArgs, sizeof(cArgs));
+	
 	char cSteamID[20];
-	GetClientAuthId(client, AuthId_Steam2, cSteamID, sizeof(cSteamID));
+	GetClientAuthId(FindTarget(client, cArgs, true), AuthId_Steam2, cSteamID, sizeof(cSteamID));
 	VR_Elvetel(cSteamID);
 
 	return Plugin_Handled;
